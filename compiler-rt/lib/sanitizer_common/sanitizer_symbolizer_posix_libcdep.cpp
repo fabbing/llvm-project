@@ -477,15 +477,14 @@ static void ChooseSymbolizerTools(IntrusiveList<SymbolizerTool> *list,
     list->push_back(tool);
     return;
   }
-  if (SymbolizerTool *tool = LibbacktraceSymbolizer::get(allocator)) {
+  if (SymbolizerTool *tool = ChooseExternalSymbolizer(allocator)) {
+    list->push_back(tool);
+  } else if (SymbolizerTool *tool = LibbacktraceSymbolizer::get(allocator)) {
     VReport(2, "Using libbacktrace symbolizer.\n");
     list->push_back(tool);
     return;
   }
 
-  if (SymbolizerTool *tool = ChooseExternalSymbolizer(allocator)) {
-    list->push_back(tool);
-  }
 
 #if SANITIZER_APPLE
   VReport(2, "Using dladdr symbolizer.\n");
